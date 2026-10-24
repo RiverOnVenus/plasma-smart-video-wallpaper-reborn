@@ -31,6 +31,16 @@ message("Version: ${CUR_VERSION}")
 if(INSTALL_WALLPAPER)
     find_package(Plasma ${PROJECT_DEP_VERSION} REQUIRED)
     plasma_install_package(package ${PLUGIN_ID} wallpapers)
+
+    # kpackage_install_package() installs the package with install(DIRECTORY)
+    # without USE_SOURCE_PERMISSIONS, so the executable bit of the dbus helper
+    # is lost when packaging (e.g. distro packages). Install it explicitly as
+    # a program so it can be executed by the wallpaper.
+    install(PROGRAMS
+        "${CMAKE_CURRENT_SOURCE_DIR}/package/contents/ui/tools/gdbus_get_signal.sh"
+        DESTINATION "${PLASMA_DATA_INSTALL_DIR}/wallpapers/${PLUGIN_ID}/contents/ui/tools"
+    )
+
     add_subdirectory(translate)
 endif()
 
